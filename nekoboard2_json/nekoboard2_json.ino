@@ -1,6 +1,7 @@
 // Scratch sensor board sketch for Arduino bootloader on Nekoboard2
 // Switch-Science
 // 2016/04/25
+// Modify for JSON_OUTPUT 2025/04/23 by NW-LAB
 
 int analogPin[4] = { A0,A1,A2,A3 };  // select the input pin for the general analog 0-4
 int lightPin = A4;   // select the input pin for the sensor
@@ -14,21 +15,31 @@ int micValue = 0;    // variable to store the value coming from the mic
 int analogValue[4] = { 0,0,0,0};  // variable to store the value coming from the analog 0-4
 const int firmware = 0x04; // Firmware virsion
 
-int senddata[18]={ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+//int senddata[18]={ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
+int senddata[8]={ 0,0,0,0,0,0,0,0,0 };
 
+// void setsenddata(int value,int channel) {
+//   int pos;
+//   byte highdata = 0;
+//   byte lowdata = 0;
+//   if (channel==15) {
+//     pos = 0;
+//   } else {
+//     pos = channel*2+2;
+//   }
+//   highdata = 0x80 | (channel<<3) | lowByte(value >>7);
+//   lowdata  = lowByte(0x7f & value);
+//   senddata[pos] = highdata;
+//   senddata[pos+1] = lowdata;
+// }
 void setsenddata(int value,int channel) {
   int pos;
-  byte highdata = 0;
-  byte lowdata = 0;
   if (channel==15) {
     pos = 0;
   } else {
-    pos = channel*2+2;
+    pos = channel+1;
   }
-  highdata = 0x80 | (channel<<3) | lowByte(value >>7);
-  lowdata  = lowByte(0x7f & value);
-  senddata[pos] = highdata;
-  senddata[pos+1] = lowdata;
+  senddata[pos] = value;
 }
 
 void setup() {
@@ -43,10 +54,51 @@ void loop() {
  // if(1){
   if (Serial.available() > 0) {     // 受信したデータが存在したら
     int inByte = Serial.read();     // 受信データを読み込む
-    if (inByte == 0x0001) {         // 送られてきたデータが0x01だったら
-      for (int i=0; i<18; i++) {
-        Serial.write(senddata[i]);  // 用意されているセンサーデータを送信する
-      }
+    //if (inByte == 0x0001) {         // 送られてきたデータが0x01だったら
+    //if (inByte == '1') {         // 送られてきたデータが'1'だったら
+    //  for (int i=0; i<18; i++) {
+    //    Serial.write(senddata[i]);  // 用意されているセンサーデータを送信する
+    //  }
+    //}
+    if (inByte == '1') {         // 送られてきたデータが'1'だったら
+      Serial.println("{");
+            Serial.print("\"FW_VERSION\":");
+            Serial.print(senddata[0]);
+            Serial.println(",");
+
+            Serial.print("\"resistor1\":");
+            Serial.print(senddata[1]);
+            Serial.println(",");
+
+            Serial.print("\"resistor2\":");
+            Serial.print(senddata[2]);
+            Serial.println(",");
+            
+            Serial.print("\"resistor3\":");
+            Serial.print(senddata[3]);
+            Serial.println(",");
+            
+            Serial.print("\"resistor4\":");
+            Serial.print(senddata[5]);
+            Serial.println(",");
+            
+            Serial.print("\"button\":");
+            Serial.print(senddata[4]);
+            Serial.println(",");
+            
+            Serial.print("\"light\":");
+            Serial.print(senddata[6]);
+            Serial.println(",");
+
+            Serial.print("\"sound\":");
+            Serial.print(senddata[7]);
+            Serial.println(",");
+            
+            Serial.print("\"slider\":");
+            Serial.print(senddata[8]);
+            Serial.println(",");
+
+      Serial.println("}")
     }
 
     // read the value from the sensor:
