@@ -1,0 +1,2 @@
+# nekoboard2_json
+nekoboard2の出力をJSONに変更する
