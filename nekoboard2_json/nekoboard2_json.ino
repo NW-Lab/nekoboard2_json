@@ -16,7 +16,7 @@ int analogValue[4] = { 0,0,0,0};  // variable to store the value coming from the
 const int firmware = 0x04; // Firmware virsion
 
 //int senddata[18]={ 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
-int senddata[8]={ 0,0,0,0,0,0,0,0,0 };
+int senddata[9]={ 0,0,0,0,0,0,0,0,0 };
 
 // void setsenddata(int value,int channel) {
 //   int pos;
@@ -98,7 +98,7 @@ void loop() {
             Serial.print(senddata[8]);
             Serial.println(",");
 
-      Serial.println("}")
+      Serial.println("}");
     }
 
     // read the value from the sensor:
